@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 import cv2
+from statistics import mean, stdev
 
 
 def select_file_with_json(rootpath):
@@ -170,7 +171,7 @@ class VOCDataset(data.Dataset):
         画像のパスを格納したリスト
     anno_list : リスト
         アノテーションへのパスを格納したリスト
-    phase : 'train' or 'test'
+    phase : 'train' or 'val'
         学習か訓練かを設定する。
     transform : object
         前処理クラスのインスタンス
@@ -203,6 +204,18 @@ class VOCDataset(data.Dataset):
         img, anno_class_img = self.transform(self.phase, img, anno_class_img)
 
         return img, anno_class_img
+
+
+def make_color_mean_std(train_img_list, val_img_list, test_img_list):
+    all_list = np.concatenate([train_img_list, val_img_list, test_img_list])
+    mean_list = []
+    std_list = []
+    for path in all_list:
+        img = Image.open(path)
+        img = np.array(img)
+        mean_list.append(np.mean(img))
+        std_list.append(np.std(img))
+    return np.mean(mean_list) / 255, np.mean(std_list) / 255
 
 
 ##以下はテスト用関数
@@ -298,7 +311,25 @@ def select_file_with_json_test():
     select_file_with_json(rootpath)
 
 
+def test_make_color_mean_std():
+    rootpath = "../data/x3"
+    filenames = select_file_with_json(rootpath)
+    (
+        train_img_list,
+        train_anno_list,
+        val_img_list,
+        val_anno_list,
+        test_img_list,
+        test_anno_list,
+    ) = make_datapath_list(rootpath, filenames)
+    color_mean, color_std = make_color_mean_std(
+        train_img_list, val_img_list, test_img_list
+    )
+    print(color_mean, color_std)
+
+
 # make_datapath_list_test()
 # make_dataset_test()
 # show_dataset_test(index=3)
 # select_file_with_json_test()
+# test_make_color_mean_std()
