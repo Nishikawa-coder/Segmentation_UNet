@@ -198,7 +198,7 @@ class VOCDataset(data.Dataset):
         """画像のTensor形式のデータ、アノテーションを取得する"""
 
         image_file_path = self.img_list[index]
-        img = Image.open(image_file_path).convert(mode="RGB")  # [高さ][幅][色RGB]
+        img = Image.open(image_file_path)  # [高さ][幅]
         anno_file_path = self.anno_list[index]
         anno_class_img = Image.open(anno_file_path)  # [高さ][幅]
         img, anno_class_img = self.transform(self.phase, img, anno_class_img)
@@ -277,8 +277,8 @@ def show_dataset_test(index=0):
         test_img_list,
         test_anno_list,
     ) = make_datapath_list(rootpath, filenames)
-    color_mean = (0.2, 0.2, 0.2)
-    color_std = (0.229, 0.224, 0.225)
+    color_mean = 0.18228737997050898
+    color_std = 0.15940997135888293
     train_dataset = VOCDataset(
         train_img_list,
         train_anno_list,
@@ -289,9 +289,10 @@ def show_dataset_test(index=0):
     )
     imges, anno_class_imges = train_dataset.__getitem__(index)
     img_val = imges
-    img_val = img_val.numpy().transpose((1, 2, 0))
-    plt.imshow(img_val)
-    plt.savefig("../class4/memo_img.png")
+    print(img_val[0].shape)
+    img_val = img_val[0].detach().numpy()
+    plt.imshow(img_val, cmap="gray")
+    plt.savefig("../class3/memo_img.png")
 
     # アノテーション画像の表示
     anno_file_path = train_anno_list[index]
@@ -302,7 +303,7 @@ def show_dataset_test(index=0):
     anno_class_img_val = Image.fromarray(np.uint8(anno_class_img_val), mode="P")
     anno_class_img_val.putpalette(p_palette)
     plt.imshow(anno_class_img_val)
-    plt.savefig("../class4/memo_anno.png")
+    plt.savefig("../class3/memo_anno.png")
     print(train_img_list[index], train_anno_list[index])
 
 
@@ -330,6 +331,6 @@ def test_make_color_mean_std():
 
 # make_datapath_list_test()
 # make_dataset_test()
-# show_dataset_test(index=3)
+# show_dataset_test(index=2)
 # select_file_with_json_test()
 # test_make_color_mean_std()
