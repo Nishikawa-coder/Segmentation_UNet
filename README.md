@@ -35,7 +35,7 @@ U-Net はセマンティックセグメンテーション用のモデルで、�
     └──
 ```
 
-接続しているマシンの`localtmp/users`に`rin(user_name)`を作成してください。
+[注] 接続しているマシンの`localtmp/users`に`rin(user_name)`を作成してください。
 
 <訓練時>  
 train.ipynb の全てのセルを再生してください。初期状態では、1 エポックだけ学習し、`log_output.csv`が生成されます。  
@@ -90,7 +90,7 @@ color_std=0.15940997135888293
 
 ### 白黒画像をRGBの型に変換してから学習
 
-この時、データローダーに使うcolor_meanやcolor_stdの値は書籍にある物と同じ値を設定した。  
+この時、データローダーに使うcolor_meanやcolor_stdの値は書籍にある物と同じ値を設定した。ロスは`log_output_init_weight_1000_1000.csv`にある。  
 
 (1)処理時間　　
 U-Netに画像を入力してoutputを出力するまでの時間をテストデータ11枚分測り合計した。  
@@ -113,16 +113,41 @@ time: `15.18376612663269` sec
 
 ### 白黒画像をグレースケールのまま学習
 
-この時、データローダーに使うcolor_meanやcolor_stdの値は今回データセットとして扱う101枚のデータセットから一枚一枚の平均と標準偏差を計算し、それぞれの平均をcolor_mean、color_stdの値としている。
+この時、データローダーに使うcolor_meanやcolor_stdの値は今回データセットとして扱う101枚のデータセットから一枚一枚の平均と標準偏差を計算し、それぞれの平均をcolor_mean、color_stdの値としている。ロスは`log_output_v1.csv`にある。
 
 (1)処理時間  
-同様に処理時間を計算した。 
+同様に処理時間を計算した。  
+
 time: `14.51577353477478` sec
 
-(2)PR曲線
+(2)PR曲線  
+
+<p align="center"><img src="https://user-images.githubusercontent.com/77057905/178956841-65979129-a2c4-4180-8029-20905404235d.png" width="45%">
+<img src="https://user-images.githubusercontent.com/77057905/178956941-6a751f91-f660-4d32-b481-fd9e6bbbd23a.png" width="45%"></p>
+<p align="center">図2 グレースケールのままのPR曲線</p>
+図2に示すようなPR曲線となり、average_precisionが0.20575667373625753となった。  
+RGBに変換した時と比べて、右肩下がりのPR曲線にはなった。しかし、average_precisionが下がってしまった。  
+
+### データセットのスプリットをランダムにする
+
+この時、これまでの実験がエポック数が大きすぎるため、学習率を1e-3から1e-2にあげ、エポック数を1000から300にした。ロスは`log_output_v4.csv`にある。
+
+(1)処理時間  
+同様に処理時間を計算した。  
+
+time: `11.440572738647461` sec
+
+(2)PR曲線  
+
+<p align="center"><img src="https://user-images.githubusercontent.com/77057905/178958094-bd5a1ae9-4afe-413a-8f32-e1a5e87c861b.png" width="45%">
+<img src="https://user-images.githubusercontent.com/77057905/178958192-a94415e7-e632-4655-a3fa-d92da559eceb.png" width="45%"></p>
+<p align="center">図3 データセットをランダムに分割して学習した時のPR曲線</p>
+図3に示すようなPR曲線となり、average_precisionが0.6409863371552706となった。  
+RGBに変換した時と比べて、PR曲線右肩下がりになり、更にaverage_precisionが下がってしまった。  
+
 
 ## 結論
-本実験では、研究室で用意されたx3というデータセット（白黒画像）とU-Netを用いて、"butu"の検出を学習し、推論にてPR曲線とagerage precisionと処理時間によって学習結果を評価した。その結果、
+本実験では、研究室で用意されたx3というデータセット（白黒画像）とU-Netを用いて、"butu"の検出を学習し、推論にてPR曲線とagerage precisionと処理時間によって学習結果を評価した。その結果、白黒画像をグレースケールのままにし、データセットをランダムに分割して学習することで**AP=0.6409863371552706**、**処理時間：11.440572738647461**という結果になった。
 
 ## 参考文献
 1. 小川雄太郎,"作りながら学ぶ！Pytorchによる発展ディープラーニング",マイナビ出版,p130(2021)
