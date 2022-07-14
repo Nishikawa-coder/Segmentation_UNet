@@ -2,3 +2,4 @@ train.py
 __pycache__/
 weights/
 inferenceRGB.ipynb
+inference.ipynb
