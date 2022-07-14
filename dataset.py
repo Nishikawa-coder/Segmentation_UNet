@@ -15,6 +15,7 @@ import numpy as np
 import json
 import cv2
 from statistics import mean, stdev
+from sklearn.model_selection import train_test_split
 
 
 def select_file_with_json(rootpath):
@@ -105,6 +106,60 @@ def make_datapath_list(rootpath, filenames):
             test_anno_list.append(anno)
         index += 1
 
+    return (
+        train_img_list,
+        train_anno_list,
+        val_img_list,
+        val_anno_list,
+        test_img_list,
+        test_anno_list,
+    )
+
+
+def make_random_datapath_list(rootpath, filenames):
+    """
+    学習、検証の画像データとアノテーションデータのファイルパスリストをランダムに作成する。
+
+    Parameters
+    ----------
+    rootpath : str
+        データフォルダへのパス
+
+    Returns
+    -------
+    ret : train_img_list, train_anno_list, val_img_list, val_anno_list
+        データへのパスを格納したリスト
+    """
+    img_path_list = [
+        osp.join(rootpath, "image", "%s.png" % os.path.splitext(filename)[0])
+        for filename in filenames
+    ]
+    anno_path_list = [
+        osp.join(
+            rootpath, "SegmentationClassPNG", "%s.png" % os.path.splitext(filename)[0]
+        )
+        for filename in filenames
+    ]
+    num_train = len(img_path_list) * 8 // 10
+    num_val = (len(img_path_list) - num_train) // 2
+    num_test = len(img_path_list) - num_train - num_val
+    (tmp_img, test_img_list, tmp_anno, test_anno_list) = train_test_split(
+        img_path_list,
+        anno_path_list,
+        train_size=num_train + num_val,
+        test_size=num_test,
+        shuffle=True,
+        random_state=1,
+    )
+
+    (train_img_list, val_img_list, train_anno_list, val_anno_list) = train_test_split(
+        tmp_img,
+        tmp_anno,
+        train_size=num_train,
+        test_size=num_val,
+        shuffle=True,
+        random_state=1,
+    )
     return (
         train_img_list,
         train_anno_list,
@@ -235,6 +290,13 @@ def make_datapath_list_test():
     print(test_img_list)
 
 
+def test_make_random_datapath_list():
+    rootpath = "../data/x3"
+    rootpath = "../data/x3"
+    filenames = select_file_with_json(rootpath)
+    make_random_datapath_list(rootpath, filenames)
+
+
 def make_dataset_test():
     rootpath = "../data/x3"
     filenames = select_file_with_json(rootpath)
@@ -334,3 +396,4 @@ def test_make_color_mean_std():
 # show_dataset_test(index=2)
 # select_file_with_json_test()
 # test_make_color_mean_std()
+test_make_random_datapath_list()
