@@ -112,8 +112,9 @@ U-Netに画像を入力してoutputを出力するまでの時間をテストデ
 `time: 15.18376612663269` sec  
 
 (2)PR曲線  
-<img src="https://user-images.githubusercontent.com/77057905/178912220-8d2debc4-bac5-4d64-b0fc-93360aec5f13.png” width="40" height="40"/>
 
+<img src="https://user-images.githubusercontent.com/77057905/178912220-8d2debc4-bac5-4d64-b0fc-93360aec5f13.png" width="50%">
+<img src="https://user-images.githubusercontent.com/77057905/178914487-3d0c1c43-d941-48b2-b22b-c643ca5e41b6.png" width="50%">
 
 ### 
 
