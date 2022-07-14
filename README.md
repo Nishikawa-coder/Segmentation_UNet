@@ -37,13 +37,8 @@ U-Net はセマンティックセグメンテーション用のモデルで、�
 
 [注] 接続しているマシンの`localtmp/users`に`rin(user_name)`を作成してください。
 
-<訓練時>  
-train.ipynb の全てのセルを再生してください。初期状態では、1 エポックだけ学習し、`log_output.csv`が生成されます。  
-また、`/localtmp/users/rin(user_name)/Unet_1`が生成され`./weights/Unet_1`にファイルが保存されます。
-
-<推論時>  
-inference.ipynb の全てのセルを再生してください。  
-`show_detection()`では推論結果の画像を表示します（緑：正しい推論、赤:間違った推論、青:推論されなかった gt）。また、最後に推論の処理時間が表示されます。
+**train_inference.ipynb の全てのセルを再生させる事で学習時と推論時の動作を確認できます**。初期状態では、`train_model()`がコメントアウトされています。    
+`show_detection()`では推論結果の画像と（緑：正しい推論、赤:間違った推論、青:推論されなかった gt）、推論の処理時間が表示されます。また、最後にPR曲線とaverage_precisionの曲線とそれぞれのaucが表示されます。
 
 ### 実験条件
 
